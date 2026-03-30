@@ -49,7 +49,9 @@ export function SettingsManager({
   sections,
   onFastrrCheckoutChange,
 }: SettingsManagerProps) {
-  const [fastrrCheckout, setFastrrCheckout] = React.useState(initialFastrrCheckout);
+  const [fastrrCheckout, setFastrrCheckout] = React.useState(
+    initialFastrrCheckout,
+  );
   const [hasChanges, setHasChanges] = React.useState(false);
   const [saveStatus, setSaveStatus] = React.useState<SaveStatus>("idle");
   const [errorMessage, setErrorMessage] = React.useState("");
@@ -82,7 +84,7 @@ export function SettingsManager({
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-          errorData.message || `Failed to save (${response.status})`
+          errorData.message || `Failed to save (${response.status})`,
         );
       }
 
@@ -141,7 +143,7 @@ export function SettingsManager({
                   "flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-200",
                   fastrrCheckout
                     ? "bg-gradient-to-br from-primary/20 to-primary/10 text-primary"
-                    : "bg-muted text-muted-foreground"
+                    : "bg-muted text-muted-foreground",
                 )}
               >
                 <Truck className="h-5 w-5" />
@@ -153,33 +155,9 @@ export function SettingsManager({
                 </CardDescription>
               </div>
             </div>
-            <Switch
-              checked={fastrrCheckout}
-              onCheckedChange={handleToggle}
-            />
+            <Switch checked={fastrrCheckout} onCheckedChange={handleToggle} />
           </div>
         </CardHeader>
-        <CardContent>
-          <div
-            className={cn(
-              "rounded-xl border px-4 py-3 text-xs font-mono transition-colors duration-200",
-              fastrrCheckout
-                ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300"
-                : "bg-muted/50 border-border text-muted-foreground"
-            )}
-          >
-            <span className="text-[11px] uppercase tracking-wider font-semibold block mb-1.5">
-              API Payload Format
-            </span>
-            {fastrrCheckout ? (
-              <span>
-                {"{ "}sections: [...], fastrrCheckout: true{" }"}
-              </span>
-            ) : (
-              <span>{"{ "}sections: [...], fastrrCheckout: false{" }"}</span>
-            )}
-          </div>
-        </CardContent>
       </Card>
 
       {/* Footer Actions */}
@@ -191,7 +169,9 @@ export function SettingsManager({
                 type="button"
                 variant="outline"
                 size="sm"
-                className={!hasChanges ? "cursor-not-allowed" : "cursor-pointer"}
+                className={
+                  !hasChanges ? "cursor-not-allowed" : "cursor-pointer"
+                }
                 disabled={!hasChanges}
               >
                 <RotateCcw className="h-4 w-4 mr-1.5" />
@@ -202,13 +182,18 @@ export function SettingsManager({
               <AlertDialogHeader>
                 <AlertDialogTitle>Reset Changes?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will discard all unsaved changes and revert to the initial settings.
-                  This action cannot be undone.
+                  This will discard all unsaved changes and revert to the
+                  initial settings. This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleReset} className="cursor-pointer">
+                <AlertDialogCancel className="cursor-pointer">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleReset}
+                  className="cursor-pointer"
+                >
                   Continue
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -223,8 +208,8 @@ export function SettingsManager({
               saveStatus === "success"
                 ? "bg-emerald-600 hover:bg-emerald-600 cursor-not-allowed"
                 : saveStatus === "error"
-                ? "bg-destructive hover:bg-destructive cursor-not-allowed"
-                : "cursor-pointer"
+                  ? "bg-destructive hover:bg-destructive cursor-not-allowed"
+                  : "cursor-pointer"
             }
           >
             {saveStatus === "saving" ? (
@@ -261,7 +246,9 @@ export function SettingsManager({
           </p>
         )}
         {saveStatus === "error" && errorMessage && (
-          <p className="text-xs text-destructive mt-2 text-right">{errorMessage}</p>
+          <p className="text-xs text-destructive mt-2 text-right">
+            {errorMessage}
+          </p>
         )}
       </div>
     </div>
