@@ -2,10 +2,14 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { SectionManager } from "@/components/section-editor";
+import { Layers, Settings } from "lucide-react";
+import { SectionManager, SettingsManager } from "@/components/section-editor";
 import { Header } from "@/components/header";
 import { isAuthenticated, getToken } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 import type { SectionConfig } from "@/lib/types/sections";
+
+type ActiveTab = "sections" | "settings";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
@@ -14,6 +18,8 @@ export default function HomePage() {
     const [isLoading, setIsLoading] = React.useState(true);
     const [sectionsConfig, setSectionsConfig] = React.useState<SectionConfig | null>(null);
     const [error, setError] = React.useState<string | null>(null);
+    const [activeTab, setActiveTab] = React.useState<ActiveTab>("sections");
+    const [fasterCheckout, setFasterCheckout] = React.useState(false);
 
     React.useEffect(() => {
         if (!isAuthenticated()) {
@@ -21,7 +27,6 @@ export default function HomePage() {
             return;
         }
 
-        // Fetch sections from API
         const fetchSections = async () => {
             try {
                 const token = getToken();
@@ -38,9 +43,10 @@ export default function HomePage() {
                 }
 
                 const data = await response.json();
-                // Handle both array response and object with sections property
                 const sections = Array.isArray(data) ? data : (data?.sections || []);
+                const isFasterCheckout = !Array.isArray(data) && data?.fasterCheckout === true;
                 setSectionsConfig({ sections });
+                setFasterCheckout(isFasterCheckout);
             } catch (err) {
                 setError(err instanceof Error ? err.message : "Failed to load sections");
             } finally {
@@ -92,7 +98,49 @@ export default function HomePage() {
             <Header />
             <main>
                 <div className="mx-auto max-w-3xl px-4 py-8">
-                    <SectionManager initialConfig={sectionsConfig} />
+                    {/* Tab Navigation */}
+                    <div className="flex items-center gap-1 p-1 mb-8 bg-muted rounded-xl w-fit">
+                        <button
+                            type="button"
+                            onClick={() => setActiveTab("sections")}
+                            className={cn(
+                                "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer",
+                                activeTab === "sections"
+                                    ? "bg-white dark:bg-gray-800 text-foreground shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            <Layers className="h-4 w-4" />
+                            Sections
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setActiveTab("settings")}
+                            className={cn(
+                                "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer",
+                                activeTab === "settings"
+                                    ? "bg-white dark:bg-gray-800 text-foreground shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            <Settings className="h-4 w-4" />
+                            Settings
+                        </button>
+                    </div>
+
+                    {activeTab === "sections" && (
+                        <SectionManager
+                            initialConfig={sectionsConfig}
+                            fasterCheckout={fasterCheckout}
+                        />
+                    )}
+
+                    {activeTab === "settings" && (
+                        <SettingsManager
+                            initialFasterCheckout={fasterCheckout}
+                            onFasterCheckoutChange={setFasterCheckout}
+                        />
+                    )}
                 </div>
             </main>
         </div>

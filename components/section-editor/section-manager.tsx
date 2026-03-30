@@ -70,6 +70,7 @@ import { cn } from "@/lib/utils";
 interface SectionManagerProps {
   initialConfig: SectionConfig;
   apiEndpoint?: string;
+  fasterCheckout?: boolean;
   onSave?: (config: SectionConfig) => void;
 }
 
@@ -138,6 +139,7 @@ const ALL_SECTION_TYPES: SectionType[] = [
 export function SectionManager({
   initialConfig,
   apiEndpoint = "/api/sections",
+  fasterCheckout = false,
   onSave,
 }: SectionManagerProps) {
   const [sections, setSections] = React.useState<Section[]>(
@@ -249,7 +251,7 @@ export function SectionManager({
   };
 
   const handleSave = async () => {
-    const config: any = [...sections];
+    const payload = { sections: [...sections], fasterCheckout };
 
     setSaveStatus("saving");
     setErrorMessage("");
@@ -261,7 +263,7 @@ export function SectionManager({
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`,
         },
-        body: JSON.stringify(config),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -273,7 +275,7 @@ export function SectionManager({
 
       setSaveStatus("success");
       setHasChanges(false);
-      onSave?.(config);
+      onSave?.({ sections });
 
       addToast({
         title: "Success!",
