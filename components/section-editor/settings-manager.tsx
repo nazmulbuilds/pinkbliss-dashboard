@@ -35,8 +35,9 @@ import { getToken } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 interface SettingsManagerProps {
-  initialFasterCheckout: boolean;
-  onFasterCheckoutChange: (enabled: boolean) => void;
+  initialFastrrCheckout: boolean;
+  sections: unknown[];
+  onFastrrCheckoutChange: (enabled: boolean) => void;
 }
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
@@ -44,22 +45,23 @@ type SaveStatus = "idle" | "saving" | "success" | "error";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 export function SettingsManager({
-  initialFasterCheckout,
-  onFasterCheckoutChange,
+  initialFastrrCheckout,
+  sections,
+  onFastrrCheckoutChange,
 }: SettingsManagerProps) {
-  const [fasterCheckout, setFasterCheckout] = React.useState(initialFasterCheckout);
+  const [fastrrCheckout, setFastrrCheckout] = React.useState(initialFastrrCheckout);
   const [hasChanges, setHasChanges] = React.useState(false);
   const [saveStatus, setSaveStatus] = React.useState<SaveStatus>("idle");
   const [errorMessage, setErrorMessage] = React.useState("");
   const { addToast } = useToast();
 
   const handleToggle = (enabled: boolean) => {
-    setFasterCheckout(enabled);
+    setFastrrCheckout(enabled);
     setHasChanges(true);
   };
 
   const handleReset = () => {
-    setFasterCheckout(initialFasterCheckout);
+    setFastrrCheckout(initialFastrrCheckout);
     setHasChanges(false);
   };
 
@@ -74,7 +76,7 @@ export function SettingsManager({
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`,
         },
-        body: JSON.stringify({ fasterCheckout }),
+        body: JSON.stringify({ sections, fastrrCheckout }),
       });
 
       if (!response.ok) {
@@ -86,7 +88,7 @@ export function SettingsManager({
 
       setSaveStatus("success");
       setHasChanges(false);
-      onFasterCheckoutChange(fasterCheckout);
+      onFastrrCheckoutChange(fastrrCheckout);
 
       addToast({
         title: "Success!",
@@ -129,7 +131,7 @@ export function SettingsManager({
         </p>
       </div>
 
-      {/* Faster Checkout Toggle */}
+      {/* Fastrr Checkout Toggle */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -137,7 +139,7 @@ export function SettingsManager({
               <div
                 className={cn(
                   "flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-200",
-                  fasterCheckout
+                  fastrrCheckout
                     ? "bg-gradient-to-br from-primary/20 to-primary/10 text-primary"
                     : "bg-muted text-muted-foreground"
                 )}
@@ -145,14 +147,14 @@ export function SettingsManager({
                 <Truck className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle>Faster Checkout</CardTitle>
+                <CardTitle>Fastrr Checkout</CardTitle>
                 <CardDescription>
                   Shipping based payment gateway
                 </CardDescription>
               </div>
             </div>
             <Switch
-              checked={fasterCheckout}
+              checked={fastrrCheckout}
               onCheckedChange={handleToggle}
             />
           </div>
@@ -161,7 +163,7 @@ export function SettingsManager({
           <div
             className={cn(
               "rounded-xl border px-4 py-3 text-xs font-mono transition-colors duration-200",
-              fasterCheckout
+              fastrrCheckout
                 ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300"
                 : "bg-muted/50 border-border text-muted-foreground"
             )}
@@ -169,12 +171,12 @@ export function SettingsManager({
             <span className="text-[11px] uppercase tracking-wider font-semibold block mb-1.5">
               API Payload Format
             </span>
-            {fasterCheckout ? (
+            {fastrrCheckout ? (
               <span>
-                {"{ "}sections: [...], fasterCheckout: true{" }"}
+                {"{ "}sections: [...], fastrrCheckout: true{" }"}
               </span>
             ) : (
-              <span>{"{ "}sections: [...], fasterCheckout: false{" }"}</span>
+              <span>{"{ "}sections: [...], fastrrCheckout: false{" }"}</span>
             )}
           </div>
         </CardContent>
