@@ -70,7 +70,7 @@ import { cn } from "@/lib/utils";
 interface SectionManagerProps {
   initialConfig: SectionConfig;
   apiEndpoint?: string;
-  fasterCheckout?: boolean;
+  fastrrCheckout?: boolean;
   onSave?: (config: SectionConfig) => void;
 }
 
@@ -139,7 +139,7 @@ const ALL_SECTION_TYPES: SectionType[] = [
 export function SectionManager({
   initialConfig,
   apiEndpoint = "/api/sections",
-  fasterCheckout = false,
+  fastrrCheckout = false,
   onSave,
 }: SectionManagerProps) {
   const [sections, setSections] = React.useState<Section[]>(
@@ -251,7 +251,7 @@ export function SectionManager({
   };
 
   const handleSave = async () => {
-    const payload = { sections: [...sections], fasterCheckout };
+    const payload = { sections: [...sections], fastrrCheckout };
 
     setSaveStatus("saving");
     setErrorMessage("");

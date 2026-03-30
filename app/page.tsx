@@ -19,7 +19,7 @@ export default function HomePage() {
     const [sectionsConfig, setSectionsConfig] = React.useState<SectionConfig | null>(null);
     const [error, setError] = React.useState<string | null>(null);
     const [activeTab, setActiveTab] = React.useState<ActiveTab>("sections");
-    const [fasterCheckout, setFasterCheckout] = React.useState(false);
+    const [fastrrCheckout, setFastrrCheckout] = React.useState(false);
 
     React.useEffect(() => {
         if (!isAuthenticated()) {
@@ -44,9 +44,9 @@ export default function HomePage() {
 
                 const data = await response.json();
                 const sections = Array.isArray(data) ? data : (data?.sections || []);
-                const isFasterCheckout = !Array.isArray(data) && data?.fasterCheckout === true;
+                const isFastrrCheckout = !Array.isArray(data) && data?.fastrrCheckout === true;
                 setSectionsConfig({ sections });
-                setFasterCheckout(isFasterCheckout);
+                setFastrrCheckout(isFastrrCheckout);
             } catch (err) {
                 setError(err instanceof Error ? err.message : "Failed to load sections");
             } finally {
@@ -131,14 +131,15 @@ export default function HomePage() {
                     {activeTab === "sections" && (
                         <SectionManager
                             initialConfig={sectionsConfig}
-                            fasterCheckout={fasterCheckout}
+                            fastrrCheckout={fastrrCheckout}
                         />
                     )}
 
                     {activeTab === "settings" && (
                         <SettingsManager
-                            initialFasterCheckout={fasterCheckout}
-                            onFasterCheckoutChange={setFasterCheckout}
+                            initialFastrrCheckout={fastrrCheckout}
+                            sections={sectionsConfig.sections}
+                            onFastrrCheckoutChange={setFastrrCheckout}
                         />
                     )}
                 </div>
