@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "clean": "rm -rf .next",
+    "prod": "npm run clean && next build && next start",
     "lint": "eslint"
   },
   "dependencies": {
