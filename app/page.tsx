@@ -20,6 +20,7 @@ export default function HomePage() {
     const [error, setError] = React.useState<string | null>(null);
     const [activeTab, setActiveTab] = React.useState<ActiveTab>("sections");
     const [fastrrCheckout, setFastrrCheckout] = React.useState(false);
+    const [razorPay, setRazorPay] = React.useState(false);
 
     React.useEffect(() => {
         if (!isAuthenticated()) {
@@ -45,8 +46,10 @@ export default function HomePage() {
                 const data = await response.json();
                 const sections = Array.isArray(data) ? data : (data?.sections || []);
                 const isFastrrCheckout = !Array.isArray(data) && data?.fastrrCheckout === true;
+                const isRazorPay = !Array.isArray(data) && data?.razorPay === true;
                 setSectionsConfig({ sections });
                 setFastrrCheckout(isFastrrCheckout);
+                setRazorPay(isRazorPay);
             } catch (err) {
                 setError(err instanceof Error ? err.message : "Failed to load sections");
             } finally {
@@ -138,8 +141,10 @@ export default function HomePage() {
                     {activeTab === "settings" && (
                         <SettingsManager
                             initialFastrrCheckout={fastrrCheckout}
+                            initialRazorPay={razorPay}
                             sections={sectionsConfig.sections}
                             onFastrrCheckoutChange={setFastrrCheckout}
+                            onRazorPayChange={setRazorPay}
                         />
                     )}
                 </div>

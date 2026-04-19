@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   Settings,
   Truck,
+  CreditCard,
   Save,
   Loader2,
   CheckCircle2,
@@ -36,8 +37,10 @@ import { cn } from "@/lib/utils";
 
 interface SettingsManagerProps {
   initialFastrrCheckout: boolean;
+  initialRazorPay: boolean;
   sections: unknown[];
   onFastrrCheckoutChange: (enabled: boolean) => void;
+  onRazorPayChange: (enabled: boolean) => void;
 }
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
@@ -46,12 +49,15 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 export function SettingsManager({
   initialFastrrCheckout,
+  initialRazorPay,
   sections,
   onFastrrCheckoutChange,
+  onRazorPayChange,
 }: SettingsManagerProps) {
   const [fastrrCheckout, setFastrrCheckout] = React.useState(
     initialFastrrCheckout,
   );
+  const [razorPay, setRazorPay] = React.useState(initialRazorPay);
   const [hasChanges, setHasChanges] = React.useState(false);
   const [saveStatus, setSaveStatus] = React.useState<SaveStatus>("idle");
   const [errorMessage, setErrorMessage] = React.useState("");
@@ -59,11 +65,19 @@ export function SettingsManager({
 
   const handleToggle = (enabled: boolean) => {
     setFastrrCheckout(enabled);
+    if (enabled) setRazorPay(false);
+    setHasChanges(true);
+  };
+
+  const handleRazorPayToggle = (enabled: boolean) => {
+    setRazorPay(enabled);
+    if (enabled) setFastrrCheckout(false);
     setHasChanges(true);
   };
 
   const handleReset = () => {
     setFastrrCheckout(initialFastrrCheckout);
+    setRazorPay(initialRazorPay);
     setHasChanges(false);
   };
 
@@ -78,7 +92,7 @@ export function SettingsManager({
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`,
         },
-        body: JSON.stringify({ sections, fastrrCheckout }),
+        body: JSON.stringify({ sections, fastrrCheckout, razorPay }),
       });
 
       if (!response.ok) {
@@ -91,6 +105,7 @@ export function SettingsManager({
       setSaveStatus("success");
       setHasChanges(false);
       onFastrrCheckoutChange(fastrrCheckout);
+      onRazorPayChange(razorPay);
 
       addToast({
         title: "Success!",
@@ -156,6 +171,33 @@ export function SettingsManager({
               </div>
             </div>
             <Switch checked={fastrrCheckout} onCheckedChange={handleToggle} />
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* RazorPay Toggle */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div
+                className={cn(
+                  "flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-200",
+                  razorPay
+                    ? "bg-gradient-to-br from-primary/20 to-primary/10 text-primary"
+                    : "bg-muted text-muted-foreground",
+                )}
+              >
+                <CreditCard className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle>RazorPay</CardTitle>
+                <CardDescription>
+                  Online payment gateway by Razorpay
+                </CardDescription>
+              </div>
+            </div>
+            <Switch checked={razorPay} onCheckedChange={handleRazorPayToggle} />
           </div>
         </CardHeader>
       </Card>
