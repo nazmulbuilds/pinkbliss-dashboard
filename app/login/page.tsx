@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = React.useState(false);
     const [error, setError] = React.useState("");
     const [formData, setFormData] = React.useState({
-        emailOrUsername: "",
+        username: "",
         password: "",
     });
 
@@ -62,7 +62,7 @@ export default function LoginPage() {
                         Welcome Back
                     </h1>
                     <p className="text-gray-600 dark:text-gray-400 mt-1">
-                        Sign in to your PinkBliss account
+                        Sign in to the PinkBliss dashboard
                     </p>
                 </div>
 
@@ -76,19 +76,20 @@ export default function LoginPage() {
                             </div>
                         )}
 
-                        {/* Email/Username Field */}
+                        {/* Username Field */}
                         <div className="space-y-2">
-                            <Label htmlFor="emailOrUsername" className="text-gray-700 dark:text-gray-300">
-                                Email or Username
+                            <Label htmlFor="username" className="text-gray-700 dark:text-gray-300">
+                                Username
                             </Label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                                 <Input
-                                    id="emailOrUsername"
-                                    name="emailOrUsername"
+                                    id="username"
+                                    name="username"
                                     type="text"
-                                    placeholder="Enter your email or username"
-                                    value={formData.emailOrUsername}
+                                    placeholder="Enter your username"
+                                    autoComplete="username"
+                                    value={formData.username}
                                     onChange={handleChange}
                                     className={cn(
                                         "pl-10 h-12 rounded-xl border-gray-200 dark:border-gray-700",
@@ -113,6 +114,7 @@ export default function LoginPage() {
                                     name="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Enter your password"
+                                    autoComplete="current-password"
                                     value={formData.password}
                                     onChange={handleChange}
                                     className={cn(

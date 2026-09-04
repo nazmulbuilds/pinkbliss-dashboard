@@ -5,13 +5,11 @@ import { useRouter } from "next/navigation";
 import { Layers, Settings } from "lucide-react";
 import { SectionManager, SettingsManager } from "@/components/section-editor";
 import { Header } from "@/components/header";
-import { isAuthenticated, getToken } from "@/lib/auth";
+import { isAuthenticated, authFetch } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import type { SectionConfig } from "@/lib/types/sections";
 
 type ActiveTab = "sections" | "settings";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 export default function HomePage() {
     const router = useRouter();
@@ -30,13 +28,8 @@ export default function HomePage() {
 
         const fetchSections = async () => {
             try {
-                const token = getToken();
-                const response = await fetch(`${API_BASE_URL}/home-sections-v2`, {
+                const response = await authFetch("/home-sections-v2", {
                     method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        ...(token && { Authorization: `Bearer ${token}` }),
-                    },
                 });
 
                 if (!response.ok) {

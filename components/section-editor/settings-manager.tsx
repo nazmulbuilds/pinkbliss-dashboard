@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
-import { getToken } from "@/lib/auth";
+import { authFetch } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 interface SettingsManagerProps {
@@ -44,8 +44,6 @@ interface SettingsManagerProps {
 }
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 export function SettingsManager({
   initialFastrrCheckout,
@@ -86,12 +84,8 @@ export function SettingsManager({
     setErrorMessage("");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/home-sections-v2`, {
+      const response = await authFetch("/home-sections-v2", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
-        },
         body: JSON.stringify({ sections, fastrrCheckout, razorPay }),
       });
 

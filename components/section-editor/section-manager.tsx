@@ -64,7 +64,7 @@ import { SortableSection } from "./sortable-section";
 import type { Section, SectionConfig, SectionType } from "@/lib/types/sections";
 import { SECTION_TYPE_LABELS } from "@/lib/types/sections";
 import { createSectionFromTemplate } from "@/lib/data/section-templates";
-import { getToken } from "@/lib/auth";
+import { authFetch } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 interface SectionManagerProps {
@@ -76,8 +76,6 @@ interface SectionManagerProps {
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 type ViewMode = "templates" | "active";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 // Icon mapping for section types
 const SECTION_ICONS: Record<SectionType, React.ElementType> = {
@@ -257,12 +255,8 @@ export function SectionManager({
     setErrorMessage("");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/home-sections-v2`, {
+      const response = await authFetch("/home-sections-v2", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
-        },
         body: JSON.stringify(payload),
       });
 

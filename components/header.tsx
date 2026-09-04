@@ -2,19 +2,26 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, LogOut, User } from "lucide-react";
+import { ChevronDown, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { getUser, logout, type User as UserType } from "@/lib/auth";
+import { getUser, isAuthenticated, logout, type User as UserType } from "@/lib/auth";
 
 export function Header() {
   const router = useRouter();
   const [user, setUser] = React.useState<UserType | null>(null);
+  // Tracked separately from `user`, and this is the point: a browser can hold a
+  // token whose stored user is unreadable — one saved by a build before the
+  // operator cutover, or a `user` key cleared on its own. Gating the menu on
+  // `user` alone hid Sign out in exactly that case, stranding a session with no
+  // way to end it. The token is what says a session exists; the name is
+  // decoration.
+  const [signedIn, setSignedIn] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     setUser(getUser());
+    setSignedIn(isAuthenticated());
   }, []);
 
   // Close dropdown when clicking outside
@@ -34,14 +41,10 @@ export function Header() {
     router.push("/login");
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  const getInitials = (username: string) => username.slice(0, 2).toUpperCase();
+
+  // Shown when the token is there but the name is not.
+  const displayName = user?.username ?? "Signed in";
 
   return (
     <header className="sticky top-0 z-40 border-b bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl">
@@ -58,7 +61,7 @@ export function Header() {
           </div>
 
           {/* Profile Dropdown */}
-          {user && (
+          {signedIn && (
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
@@ -71,15 +74,12 @@ export function Header() {
               >
                 {/* Avatar */}
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-rose-400 text-white text-sm font-medium">
-                  {getInitials(user.displayName || user.userLogin)}
+                  {getInitials(displayName)}
                 </div>
                 {/* Name */}
                 <div className="hidden sm:block text-left">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {user.displayName || user.userLogin}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {user.userEmail}
+                    {displayName}
                   </p>
                 </div>
                 <ChevronDown
@@ -97,14 +97,11 @@ export function Header() {
                   <div className="p-4 border-b border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-rose-400 text-white font-medium">
-                        {getInitials(user.displayName || user.userLogin)}
+                        {getInitials(displayName)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-gray-900 dark:text-white truncate">
-                          {user.displayName || user.userLogin}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                          {user.userEmail}
+                          {displayName}
                         </p>
                       </div>
                     </div>
