@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
+import { BackupManager } from "./backup-manager";
 import { authFetch } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
@@ -195,6 +196,9 @@ export function SettingsManager({
           </div>
         </CardHeader>
       </Card>
+
+      {/* Backup & Restore — the configuration lives only on the server. */}
+      <BackupManager currentSectionCount={sections.length} />
 
       {/* Footer Actions */}
       <div className="sticky bottom-0 -mx-4 -mb-4 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80 px-4 py-4">
